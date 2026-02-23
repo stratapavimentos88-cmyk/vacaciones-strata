@@ -5,65 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solicitud de Vacaciones - Strata Pavimentos</title>
 <style>
-body { font-family: Arial; margin:0; padding:10px; background:#525659; }
-.container { max-width:600px; margin:auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); }
-h1 { text-align:center; font-size:18px; margin-bottom:15px; }
-.field { margin-bottom:12px; display:flex; flex-direction:column; }
-.field label { font-weight:bold; margin-bottom:5px; }
-input, select, button { padding:10px; font-size:14px; border-radius:5px; border:1px solid #999; width:100%; box-sizing:border-box; }
-button { background:#27ae60; color:white; border:none; margin-top:10px; cursor:pointer; font-weight:bold; font-size:16px; }
-button:hover { background:#219150; }
-canvas { border:1px solid #000; width:100%; height:120px; margin-top:5px; }
-.clear-btn { background:#e74c3c; color:white; font-size:12px; padding:3px 8px; border:none; cursor:pointer; border-radius:3px; margin-top:5px; align-self:flex-end; }
-#total_dias { text-align:center; font-weight:bold; background:#e8f4fd; border:1px solid #3498db; width:80px; margin-top:5px; }
+body { font-family: Arial, sans-serif; margin:0; padding:10px; background:#525659; }
+.container { max-width:800px; margin:auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.3); }
+h1 { text-align:center; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:10px; margin-bottom:15px; }
+.section { background:#f4f4f4; padding:5px 10px; font-weight:bold; margin:15px 0 10px; border:1px solid #ccc; font-size:14px; }
+.field { margin-bottom:10px; display:flex; flex-direction:column; }
+.field label { font-weight:bold; margin-bottom:5px; font-size:13px; }
+input[type="text"], input[type="date"], select { padding:6px; font-size:13px; border-radius:2px; border:1px solid #999; width:100%; box-sizing:border-box; }
+.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; font-size:13px; }
+.type-item { display:flex; align-items:center; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.signature-wrapper { border:1px solid #000; background:#fff; position:relative; cursor:crosshair; margin-top:5px; }
+canvas { display:block; width:100%; height:120px; }
+.clear-btn { position:absolute; top:5px; right:5px; background:#e74c3c; color:white; border:none; padding:3px 8px; cursor:pointer; font-size:10px; border-radius:3px; z-index:10; }
+#total_dias { font-weight:bold; background-color:#e8f4fd; color:#2c3e50; border:1px solid #3498db; text-align:center; max-width:80px; margin-top:5px; }
+.btn-submit { padding:12px 25px; background:#27ae60; color:white; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold; margin-top:10px; }
+.btn-submit:hover { background:#219150; }
+@media(max-width:600px){.grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
 <div class="container">
-<h1>Solicitud de Vacaciones</h1>
+<h1>SOLICITUD DE VACACIONES / PERMISOS</h1>
 
-<div class="field"><label>Nombre completo:</label><input type="text" id="nombre"></div>
-<div class="field"><label>DNI:</label><input type="text" id="dni"></div>
-<div class="field"><label>Empresa:</label>
+<div class="field">
+<label>EMPRESA:</label>
 <select id="empresa">
-<option value="">-- Seleccione --</option>
+<option value="">-- Seleccione empresa --</option>
 <option value="Strata Pavimentos, S.L.">Strata Pavimentos, S.L.</option>
 <option value="Touchit, S.L.">Touchit, S.L.</option>
 <option value="Inversiones Tierra de Barros, S.L.">Inversiones Tierra de Barros, S.L.</option>
 </select>
 </div>
-<div class="field"><label>Tipo de solicitud:</label>
-<select id="tipo">
-<option value="Vacaciones">Vacaciones</option>
-<option value="Permiso">Permiso</option>
-<option value="Otros">Otros</option>
-</select>
+
+<div class="section">1. DATOS DEL TRABAJADOR/A</div>
+<div class="field"><label>Nombre y Apellidos:</label><input type="text" id="nombre"></div>
+<div class="grid">
+<div class="field"><label>DNI/NIE:</label><input type="text" id="dni"></div>
+<div class="field"><label>Puesto:</label><input type="text" id="puesto"></div>
 </div>
 
-<div class="field"><label>Fecha inicio:</label><input type="date" id="fecha_inicio" onchange="calcularDias()"></div>
-<div class="field"><label>Fecha fin:</label><input type="date" id="fecha_fin" onchange="calcularDias()"></div>
-<div class="field"><label>Días:</label><input type="text" id="total_dias" readonly></div>
+<div class="section">2. TIPO DE SOLICITUD</div>
+<div class="type-grid">
+<div class="type-item"><input type="checkbox" id="vacaciones"> Vacaciones</div>
+<div class="type-item"><input type="checkbox" id="permiso"> Días de permiso no retribuido</div>
+<div class="type-item"><input type="checkbox" id="asuntos"> Asuntos propios</div>
+<div class="type-item"><input type="checkbox" id="festivo"> Festivo Local</div>
+<div class="type-item" style="grid-column: span 2;"><input type="checkbox" id="otros"> Otros: <input type="text" id="otros_text" style="margin-left:5px;"></div>
+</div>
 
+<div class="section">3. PERÍODO SOLICITADO</div>
+<div class="grid">
+<div class="field"><label>Fecha Inicio:</label><input type="date" id="fecha_inicio" onchange="calcularDias()"></div>
+<div class="field"><label>Fecha Fin:</label><input type="date" id="fecha_fin" onchange="calcularDias()"></div>
+</div>
+<div class="field"><label>Número total de días:</label><input type="text" id="total_dias" readonly></div>
+
+<div class="section">4. FIRMAS Y CONSTANCIA</div>
 <div class="field">
-<label>Firma:</label>
+<label>Firma del trabajador/a:</label>
+<div class="signature-wrapper">
 <canvas id="firma"></canvas>
-<button class="clear-btn" onclick="clearCanvas('firma')">Borrar firma</button>
+<button class="clear-btn" onclick="clearCanvas('firma')">Borrar</button>
+</div>
 </div>
 
-<button onclick="enviar()">Enviar Solicitud</button>
+<button class="btn-submit" onclick="enviar()">Enviar Solicitud</button>
 <p id="mensaje" style="color:green; margin-top:10px;"></p>
 </div>
 
 <script>
 // calcular días
 function calcularDias(){
-  const inicio=document.getElementById('fecha_inicio').value;
-  const fin=document.getElementById('fecha_fin').value;
-  if(inicio && fin){
-    const diff=(new Date(fin)-new Date(inicio))/(1000*60*60*24)+1;
-    document.getElementById('total_dias').value=diff>0?diff:0;
-  }
+const inicio=document.getElementById('fecha_inicio').value;
+const fin=document.getElementById('fecha_fin').value;
+if(inicio && fin){
+const diff=(new Date(fin)-new Date(inicio))/(1000*60*60*24)+1;
+document.getElementById('total_dias').value=diff>0?diff:0;
+}
 }
 
 // canvas firma
@@ -78,27 +98,35 @@ function clearCanvas(id){const c=document.getElementById(id); c.getContext('2d')
 
 // enviar datos a Google Sheets
 function enviar(){
-  const firmaData=canvas.toDataURL();
-  const data={
-    nombre: document.getElementById('nombre').value,
-    dni: document.getElementById('dni').value,
-    empresa: document.getElementById('empresa').value,
-    tipo: document.getElementById('tipo').value,
-    fecha_inicio: document.getElementById('fecha_inicio').value,
-    fecha_fin: document.getElementById('fecha_fin').value,
-    dias: document.getElementById('total_dias').value,
-    firma: firmaData
-  };
-  fetch(https://script.google.com/macros/s/AKfycbwUkHUalD5Np-Q35YXWhvoFgA1FeIuW2-a6pb3SdUZtl990oX1CatehlsalLlhVRnqb/exec,{
-    method:'POST',
-    body: JSON.stringify(data)
-  }).then(res=>res.json()).then(res=>{
-    document.getElementById('mensaje').textContent="✅ Solicitud enviada correctamente!";
-  }).catch(err=>{
-    document.getElementById('mensaje').textContent="❌ Error al enviar, revise conexión.";
-  });
+const firmaData=canvas.toDataURL();
+let tipoSolicitud=[];
+if(document.getElementById('vacaciones').checked) tipoSolicitud.push('Vacaciones');
+if(document.getElementById('permiso').checked) tipoSolicitud.push('Permiso no retribuido');
+if(document.getElementById('asuntos').checked) tipoSolicitud.push('Asuntos propios');
+if(document.getElementById('festivo').checked) tipoSolicitud.push('Festivo Local');
+if(document.getElementById('otros').checked) tipoSolicitud.push(document.getElementById('otros_text').value);
+
+const data={
+nombre: document.getElementById('nombre').value,
+dni: document.getElementById('dni').value,
+puesto: document.getElementById('puesto').value,
+empresa: document.getElementById('empresa').value,
+tipo: tipoSolicitud.join(', '),
+fecha_inicio: document.getElementById('fecha_inicio').value,
+fecha_fin: document.getElementById('fecha_fin').value,
+dias: document.getElementById('total_dias').value,
+firma: firmaData
+};
+
+fetch('https://script.google.com/macros/s/AKfycbwUkHUalD5Np-Q35YXWhvoFgA1FeIuW2-a6pb3SdUZtl990oX1CatehlsalLlhVRnqb/exec',{
+method:'POST',
+body: JSON.stringify(data)
+}).then(res=>res.json()).then(res=>{
+document.getElementById('mensaje').textContent="✅ Solicitud enviada correctamente!";
+}).catch(err=>{
+document.getElementById('mensaje').textContent="❌ Error al enviar, revise conexión.";
+});
 }
 </script>
-
 </body>
 </html>
