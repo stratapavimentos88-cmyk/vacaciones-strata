@@ -3,41 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Vacaciones - Formato Oficial</title>
+    <title>Solicitud de Vacaciones - Strata Pavimentos</title>
     <style>
         :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f5f6fa; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .document { max-width: 850px; margin: 0 auto; background: #fff; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 8px; }
         header { text-align: center; border-bottom: 3px solid var(--primary); margin-bottom: 25px; padding-bottom: 10px; }
-        h1 { font-size: 22px; color: var(--primary); margin: 0; text-transform: uppercase; }
-        .section { background: #f8f9fa; padding: 10px 15px; font-weight: bold; margin: 20px 0 10px; border-left: 5px solid var(--primary); font-size: 14px; text-transform: uppercase; border-top: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+        h1 { font-size: 20px; color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .section { background: #f8f9fa; padding: 10px 15px; font-weight: bold; margin: 25px 0 10px; border-left: 5px solid var(--primary); font-size: 13px; text-transform: uppercase; border: 1px solid #ddd; border-left: 5px solid var(--primary); }
         .field { margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; }
         .field label { width: 100%; font-weight: bold; font-size: 13px; margin-bottom: 5px; }
         @media(min-width: 600px) { .field label { width: 180px; margin-bottom: 0; } }
         input[type="text"], input[type="date"], select, textarea { flex: 1; border: 1px solid #ccc; padding: 8px; border-radius: 4px; font-size: 14px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        
         .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 13px; margin: 15px 0; }
-        .type-item { display: flex; align-items: center; border: 1px solid #eee; padding: 8px; border-radius: 4px; }
-        .type-item input { margin-right: 10px; width: 18px; height: 18px; }
+        .type-item { display: flex; align-items: center; background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 4px; }
+        .type-item input { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
         
         /* Firmas */
         .signature-section { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
-        .signature-box { border: 2px dashed #bdc3c7; background: #fafafa; position: relative; border-radius: 4px; text-align: center; }
-        .signature-label { font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block; color: var(--primary); }
-        canvas { display: block; width: 100%; height: 140px; cursor: crosshair; }
+        .signature-box { border: 2px dashed #bdc3c7; background: #fafafa; position: relative; border-radius: 4px; }
+        .signature-label { font-size: 12px; font-weight: bold; margin-bottom: 8px; display: block; color: var(--primary); text-align: center; }
+        canvas { display: block; width: 100%; height: 150px; cursor: crosshair; touch-action: none; }
         .clear-btn { position: absolute; top: 5px; right: 5px; background: #e74c3c; color: #fff; border: none; padding: 4px 8px; cursor: pointer; font-size: 10px; border-radius: 3px; z-index: 10; }
         
-        .rgpd { font-size: 10px; color: #7f8c8d; text-align: justify; margin-top: 30px; padding: 15px; border: 1px solid #eee; line-height: 1.3; }
-        .no-print { position: sticky; top: 0; z-index: 100; text-align: center; padding: 15px; background: var(--primary); margin-bottom: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 12px 35px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-main:hover { transform: translateY(-2px); background: #219150; box-shadow: 0 6px 8px rgba(0,0,0,0.2); }
-        #td { font-weight: bold; color: #c0392b; background: #fdf2f2; border: 1px solid #e74c3c; width: 80px; text-align: center; flex: none; }
+        .rgpd { font-size: 10px; color: #7f8c8d; text-align: justify; margin-top: 30px; padding: 15px; border-top: 1px solid #eee; line-height: 1.4; }
+        
+        /* Botonera GitHub */
+        .no-print { position: sticky; top: 0; z-index: 100; text-align: center; padding: 15px; background: var(--primary); margin-bottom: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 12px 40px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .btn-main:hover { background: #219150; transform: translateY(-1px); }
+        
+        #td { font-weight: bold; color: #c0392b; background: #fdf2f2; border: 1px solid #e74c3c; width: 70px; text-align: center; flex: none; }
 
         @media print { 
             .no-print, .clear-btn { display: none !important; } 
             body { padding: 0; background: #fff; } 
-            .document { box-shadow: none; border: none; width: 100%; padding: 20px; }
-            select { appearance: none; -webkit-appearance: none; border: none; font-size: 16px; font-weight: bold; }
+            .document { box-shadow: none; border: none; width: 100%; padding: 10px; margin: 0; }
+            input, select, textarea { border: 1px solid #eee !important; }
         }
     </style>
 </head>
@@ -53,7 +56,7 @@
     <div class="field">
         <label>EMPRESA:</label>
         <select id="emp">
-            <option value="">-- Seleccionar Entidad --</option>
+            <option value="">-- Seleccionar Empresa --</option>
             <option>Strata Pavimentos, S.L.</option>
             <option>Touchit, S.L.</option>
             <option>Inversiones Tierra de Barros, S.L.</option>
@@ -61,8 +64,8 @@
     </div>
 
     <div class="section">1. DATOS DEL TRABAJADOR/A</div>
-    <div class="field"><label>Nombre y Apellidos:</label><input type="text"></div>
-    <div class="grid">
+    <div class="field"><label>Nombre y Apellidos:</label><input type="text" placeholder="Escriba aquí..."></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div class="field"><label style="width: 80px;">DNI/NIE:</label><input type="text"></div>
         <div class="field"><label style="width: 80px;">Puesto:</label><input type="text"></div>
     </div>
@@ -75,82 +78,95 @@
         <div class="type-item"><label><input type="checkbox"> Festivo Local</label></div>
         <div class="type-item" style="grid-column: span 2;">
             <label style="width: auto; margin-right: 10px;"><input type="checkbox"> Otros:</label>
-            <input type="text" style="border-bottom: 1px solid #ccc; border-top:0; border-left:0; border-right:0; padding: 2px;">
+            <input type="text" style="border-bottom: 1px solid #ccc; border-top:0; border-left:0; border-right:0;">
         </div>
     </div>
 
-    <div class="section">3. PERÍODO Y CÁLCULO</div>
-    <div class="grid">
+    <div class="section">3. PERÍODO SOLICITADO</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div class="field"><label style="width: 100px;">Fecha Inicio:</label><input type="date" id="fi" onchange="calc()"></div>
         <div class="field"><label style="width: 100px;">Fecha Fin:</label><input type="date" id="ff" onchange="calc()"></div>
     </div>
     <div class="field">
-        <label>Días totales (naturales):</label>
+        <label>Total días naturales:</label>
         <input type="text" id="td" readonly placeholder="0">
     </div>
 
-    <div class="section">4. FIRMAS DE AUTORIZACIÓN</div>
+    <div class="section">4. FIRMAS DIGITALES</div>
     <div class="signature-section">
         <div>
-            <span class="signature-label">Firma del Trabajador/a:</span>
+            <span class="signature-label">Firma del Trabajador/a</span>
             <div class="signature-box">
-                <button class="clear-btn" onclick="clearC('s1')">Limpiar</button>
+                <button class="clear-btn" onclick="clearC('s1')">Borrar</button>
                 <canvas id="s1"></canvas>
             </div>
         </div>
         <div>
-            <span class="signature-label">Firma del Responsable / Empresa:</span>
+            <span class="signature-label">Firma Autorización (Empresa)</span>
             <div class="signature-box">
-                <button class="clear-btn" onclick="clearC('s2')">Limpiar</button>
+                <button class="clear-btn" onclick="clearC('s2')">Borrar</button>
                 <canvas id="s2"></canvas>
             </div>
         </div>
     </div>
 
     <div class="rgpd">
-        <strong>CLÁUSULA DE PROTECCIÓN DE DATOS:</strong> En cumplimiento del Reglamento General de Protección de Datos (RGPD), se informa que los datos recogidos en este formulario serán tratados por la empresa seleccionada con la exclusiva finalidad de gestionar la solicitud de permisos y vacaciones. Los datos se conservarán durante la vigencia de la relación laboral y los plazos de prescripción legal. Puede ejercer sus derechos de acceso, rectificación, supresión y portabilidad de sus datos mediante solicitud dirigida al departamento de administración de la entidad correspondiente.
+        <strong>RGPD:</strong> Los datos de este formulario son tratados por la empresa seleccionada para la gestión laboral. Base legal: Contrato de trabajo. Se conservarán según plazos legales. Derechos de acceso, rectificación o supresión disponibles contactando con administración.
     </div>
 </div>
 
 <script>
+    // Cálculo de días
     function calc() {
         const i = document.getElementById('fi').value, f = document.getElementById('ff').value;
         if(i && f) {
             const d1 = new Date(i), d2 = new Date(f);
-            if(d2 >= d1) {
-                const diff = Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-                document.getElementById('td').value = diff;
-            } else {
-                document.getElementById('td').value = "Error";
-            }
+            if(d2 >= d1) document.getElementById('td').value = Math.ceil(Math.abs(d2-d1)/(1000*60*60*24))+1;
+            else document.getElementById('td').value = "Error";
         }
     }
 
-    function initC(id) {
+    // Lógica de Firma (Dual Canvas)
+    function initCanvas(id) {
         const c = document.getElementById(id), ctx = c.getContext('2d');
-        // Ajustar resolución del canvas
+        
+        // Ajuste de resolución
         const ratio = window.devicePixelRatio || 1;
         c.width = c.offsetWidth * ratio;
         c.height = c.offsetHeight * ratio;
         ctx.scale(ratio, ratio);
         
-        let drawing = false; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = "#000";
+        let drawing = false;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = "#000";
 
-        const getP = e => {
+        const getPos = e => {
             const r = c.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            return { x: clientX - r.left, y: clientY - r.top };
+            const cx = e.clientX || (e.touches && e.touches[0].clientX);
+            const cy = e.clientY || (e.touches && e.touches[0].clientY);
+            return { x: cx - r.left, y: cy - r.top };
         };
 
-        const start = e => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); };
-        const move = e => { if(!drawing) return; const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); };
-        const stop = () => { drawing = false; ctx.closePath(); };
+        const start = e => { 
+            drawing = true; 
+            ctx.beginPath(); 
+            const p = getPos(e); 
+            ctx.moveTo(p.x, p.y); 
+            if(e.cancelable) e.preventDefault(); 
+        };
+        const move = e => { 
+            if(!drawing) return; 
+            const p = getPos(e); 
+            ctx.lineTo(p.x, p.y); 
+            ctx.stroke(); 
+            if(e.cancelable) e.preventDefault(); 
+        };
+        const stop = () => drawing = false;
 
         c.addEventListener('mousedown', start);
         c.addEventListener('mousemove', move);
         window.addEventListener('mouseup', stop);
-        
         c.addEventListener('touchstart', start, {passive:false});
         c.addEventListener('touchmove', move, {passive:false});
         c.addEventListener('touchend', stop);
@@ -158,13 +174,13 @@
 
     function clearC(id) {
         const c = document.getElementById(id);
-        const ctx = c.getContext('2d');
-        ctx.clearRect(0, 0, c.width, c.height);
+        c.getContext('2d').clearRect(0, 0, c.width, c.height);
     }
 
+    // Inicializar ambos cuadros
     window.onload = () => {
-        initC('s1');
-        initC('s2');
+        initCanvas('s1');
+        initCanvas('s2');
     };
 </script>
 </body>
