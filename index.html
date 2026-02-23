@@ -63,11 +63,20 @@ canvas { width:100%; height:100%; }
 <div class="field"><label>Número total de días:</label><input type="text" id="total_dias" readonly></div>
 
 <div class="section">4. FIRMAS Y CONSTANCIA</div>
+<div class="grid">
 <div class="field">
 <label>Firma del trabajador/a:</label>
 <div class="signature-wrapper">
-<canvas id="firma"></canvas>
-<button class="clear-btn" onclick="clearCanvas('firma')">Borrar</button>
+<canvas id="firma_trabajador"></canvas>
+<button class="clear-btn" onclick="clearCanvas('firma_trabajador')">Borrar</button>
+</div>
+</div>
+<div class="field">
+<label>Firma de autorización (empresa):</label>
+<div class="signature-wrapper">
+<canvas id="firma_autoriza"></canvas>
+<button class="clear-btn" onclick="clearCanvas('firma_autoriza')">Borrar</button>
+</div>
 </div>
 </div>
 
@@ -86,67 +95,78 @@ document.getElementById('total_dias').value=diff>0?diff:0;
 }
 }
 
-// canvas firma
-let canvas=document.getElementById('firma'), ctx=canvas.getContext('2d');
-let dibujando=false;
+// función para inicializar firmas
+function initFirma(canvasId){
+  const canvas=document.getElementById(canvasId);
+  const ctx=canvas.getContext('2d');
+  let dibujando=false;
 
-function resizeCanvas(){
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  function resize(){
+    canvas.width=canvas.offsetWidth;
+    canvas.height=canvas.offsetHeight;
+    ctx.lineWidth=2;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  function getPos(e){
+    const rect=canvas.getBoundingClientRect();
+    if(e.touches) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
+    return {x:e.clientX-rect.left, y:e.clientY-rect.top};
+  }
+
+  canvas.addEventListener('mousedown', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
+  canvas.addEventListener('mousemove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke();}});
+  window.addEventListener('mouseup', ()=>dibujando=false);
+  canvas.addEventListener('mouseleave', ()=>dibujando=false);
+  
+  canvas.addEventListener('touchstart', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();},{passive:false});
+  canvas.addEventListener('touchmove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();}},{passive:false});
+  canvas.addEventListener('touchend', ()=>dibujando=false);
+
+  return ctx;
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-function getPos(e){
-  const rect=canvas.getBoundingClientRect();
-  if(e.touches) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
-  return {x:e.clientX-rect.left, y:e.clientY-rect.top};
+const ctxTrabajador=initFirma('firma_trabajador');
+const ctxAutoriza=initFirma('firma_autoriza');
+
+function clearCanvas(id){
+  const c=document.getElementById(id);
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
 }
 
-canvas.addEventListener('mousedown', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
-canvas.addEventListener('mousemove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke();}});
-canvas.addEventListener('mouseup', ()=>dibujando=false);
-canvas.addEventListener('mouseleave', ()=>dibujando=false);
-
-canvas.addEventListener('touchstart', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();},{passive:false});
-canvas.addEventListener('touchmove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();}},{passive:false});
-canvas.addEventListener('touchend', ()=>dibujando=false);
-
-function clearCanvas(id){document.getElementById(id).getContext('2d').clearRect(0,0,canvas.width,canvas.height);}
-
-// enviar datos a Google Sheets
+// enviar datos
 function enviar(){
-const firmaData=canvas.toDataURL();
-let tipoSolicitud=[];
-if(document.getElementById('vacaciones').checked) tipoSolicitud.push('Vacaciones');
-if(document.getElementById('permiso').checked) tipoSolicitud.push('Permiso no retribuido');
-if(document.getElementById('asuntos').checked) tipoSolicitud.push('Asuntos propios');
-if(document.getElementById('festivo').checked) tipoSolicitud.push('Festivo Local');
-if(document.getElementById('otros').checked) tipoSolicitud.push(document.getElementById('otros_text').value);
+  const data={
+    nombre: document.getElementById('nombre').value,
+    dni: document.getElementById('dni').value,
+    puesto: document.getElementById('puesto').value,
+    empresa: document.getElementById('empresa').value,
+    tipo: [
+      document.getElementById('vacaciones').checked?'Vacaciones':'',
+      document.getElementById('permiso').checked?'Permiso no retribuido':'',
+      document.getElementById('asuntos').checked?'Asuntos propios':'',
+      document.getElementById('festivo').checked?'Festivo Local':'',
+      document.getElementById('otros').checked?document.getElementById('otros_text').value:''
+    ].filter(x=>x).join(', '),
+    fecha_inicio: document.getElementById('fecha_inicio').value,
+    fecha_fin: document.getElementById('fecha_fin').value,
+    dias: document.getElementById('total_dias').value,
+    firma_trabajador: document.getElementById('firma_trabajador').toDataURL(),
+    firma_autoriza: document.getElementById('firma_autoriza').toDataURL()
+  };
 
-const data={
-nombre: document.getElementById('nombre').value,
-dni: document.getElementById('dni').value,
-puesto: document.getElementById('puesto').value,
-empresa: document.getElementById('empresa').value,
-tipo: tipoSolicitud.join(', '),
-fecha_inicio: document.getElementById('fecha_inicio').value,
-fecha_fin: document.getElementById('fecha_fin').value,
-dias: document.getElementById('total_dias').value,
-firma: firmaData
-};
-
-fetch(https://script.google.com/macros/s/AKfycbzCpByu20DxukAW2ouVhn45Gu1rzcup6QcYwr89Cp_lZaXdKngnn31leaZ8mx7YoFIW/exec,{
-method:'POST',
-body: JSON.stringify(data)
-}).then(res=>res.json()).then(res=>{
-document.getElementById('mensaje').textContent="✅ Solicitud enviada correctamente!";
-}).catch(err=>{
-document.getElementById('mensaje').textContent="❌ Error al enviar, revise conexión.";
-});
+  fetch('URL_DE_TU_WEB_APP', {method:'POST', body: JSON.stringify(data)})
+    .then(res=>res.json())
+    .then(res=>{
+      document.getElementById('mensaje').textContent="✅ Solicitud enviada correctamente!";
+    })
+    .catch(err=>{
+      document.getElementById('mensaje').textContent="❌ Error al enviar, revise conexión.";
+      console.error(err);
+    });
 }
 </script>
 </body>
