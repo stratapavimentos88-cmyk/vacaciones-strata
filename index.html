@@ -1,173 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solicitud de Vacaciones - Strata Pavimentos</title>
-<style>
-body { font-family: Arial, sans-serif; margin:0; padding:10px; background:#525659; }
-.container { max-width:800px; margin:auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.3); }
-h1 { text-align:center; font-size:20px; text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:10px; margin-bottom:15px; }
-.section { background:#f4f4f4; padding:5px 10px; font-weight:bold; margin:15px 0 10px; border:1px solid #ccc; font-size:14px; }
-.field { margin-bottom:10px; display:flex; flex-direction:column; }
-.field label { font-weight:bold; margin-bottom:5px; font-size:13px; }
-input[type="text"], input[type="date"], select { padding:6px; font-size:13px; border-radius:2px; border:1px solid #999; width:100%; box-sizing:border-box; }
-.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; font-size:13px; }
-.type-item { display:flex; align-items:center; }
-.grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.signature-wrapper { border:1px solid #000; background:#fff; position:relative; cursor:crosshair; margin-top:5px; height:150px; }
-canvas { width:100%; height:100%; }
-.clear-btn { position:absolute; top:5px; right:5px; background:#e74c3c; color:white; border:none; padding:3px 8px; cursor:pointer; font-size:10px; border-radius:3px; z-index:10; }
-#total_dias { font-weight:bold; background-color:#e8f4fd; color:#2c3e50; border:1px solid #3498db; text-align:center; max-width:80px; margin-top:5px; }
-.btn-submit { padding:12px 25px; background:#27ae60; color:white; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold; margin-top:10px; }
-.btn-submit:hover { background:#219150; }
-@media(max-width:600px){.grid{grid-template-columns:1fr;}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Vacaciones - Strata Pavimentos</title>
+    <style>
+        :root { --primary: #27ae60; --dark: #34495e; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .document { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 8px; }
+        header { text-align: center; border-bottom: 3px solid var(--dark); margin-bottom: 20px; }
+        h1 { font-size: 22px; color: var(--dark); margin-bottom: 10px; }
+        .section { background: #eee; padding: 8px 15px; font-weight: bold; margin: 20px 0 10px; border-left: 5px solid var(--dark); font-size: 14px; }
+        .field { margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; }
+        .field label { width: 100%; font-weight: bold; font-size: 13px; margin-bottom: 5px; }
+        @media(min-width: 600px) { .field label { width: 180px; margin-bottom: 0; } }
+        input[type="text"], input[type="date"], select, textarea { flex: 1; border: 1px solid #ccc; padding: 8px; border-radius: 4px; font-size: 14px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; margin: 10px 0; }
+        .signature-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
+        .signature-box { border: 2px dashed #bdc3c7; background: #fafafa; position: relative; border-radius: 4px; }
+        canvas { display: block; width: 100%; height: 130px; cursor: crosshair; }
+        .clear-btn { position: absolute; top: 5px; right: 5px; background: #e74c3c; color: #fff; border: none; padding: 4px 8px; cursor: pointer; font-size: 10px; border-radius: 3px; }
+        .rgpd { font-size: 11px; color: #7f8c8d; text-align: justify; margin-top: 30px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+        .no-print { position: sticky; top: 0; z-index: 100; text-align: center; padding: 15px; background: rgba(52, 73, 94, 0.9); margin-bottom: 20px; border-radius: 0 0 8px 8px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { transform: scale(1.05); background: #219150; }
+        #total_dias { font-weight: bold; color: var(--primary); background: #e8f8f0; border-color: var(--primary); width: 60px; text-align: center; flex: none; }
+        @media print { .no-print, .clear-btn { display: none; } body { padding: 0; background: #fff; } .document { box-shadow: none; border: none; width: 100%; } }
+    </style>
 </head>
 <body>
 
-<div class="container">
-<h1>SOLICITUD DE VACACIONES / PERMISOS</h1>
-
-<div class="field">
-<label>EMPRESA:</label>
-<select id="empresa">
-<option value="">-- Seleccione empresa --</option>
-<option value="Strata Pavimentos, S.L.">Strata Pavimentos, S.L.</option>
-<option value="Touchit, S.L.">Touchit, S.L.</option>
-<option value="Inversiones Tierra de Barros, S.L.">Inversiones Tierra de Barros, S.L.</option>
-</select>
+<div class="no-print">
+    <button class="btn-main" onclick="window.print()">💾 GENERAR PDF PARA CONTABILIDAD</button>
 </div>
 
-<div class="section">1. DATOS DEL TRABAJADOR/A</div>
-<div class="field"><label>Nombre y Apellidos:</label><input type="text" id="nombre"></div>
-<div class="grid">
-<div class="field"><label>DNI/NIE:</label><input type="text" id="dni"></div>
-<div class="field"><label>Puesto:</label><input type="text" id="puesto"></div>
-</div>
+<div class="document">
+    <header><h1>SOLICITUD DE VACACIONES / PERMISOS</h1></header>
 
-<div class="section">2. TIPO DE SOLICITUD</div>
-<div class="type-grid">
-<div class="type-item"><input type="checkbox" id="vacaciones"> Vacaciones</div>
-<div class="type-item"><input type="checkbox" id="permiso"> Días de permiso no retribuido</div>
-<div class="type-item"><input type="checkbox" id="asuntos"> Asuntos propios</div>
-<div class="type-item"><input type="checkbox" id="festivo"> Festivo Local</div>
-<div class="type-item" style="grid-column: span 2;"><input type="checkbox" id="otros"> Otros: <input type="text" id="otros_text" style="margin-left:5px;"></div>
-</div>
+    <div class="field">
+        <label>EMPRESA:</label>
+        <select id="emp">
+            <option value="">-- Seleccionar Entidad --</option>
+            <option>Strata Pavimentos, S.L.</option>
+            <option>Touchit, S.L.</option>
+            <option>Inversiones Tierra de Barros, S.L.</option>
+        </select>
+    </div>
 
-<div class="section">3. PERÍODO SOLICITADO</div>
-<div class="grid">
-<div class="field"><label>Fecha Inicio:</label><input type="date" id="fecha_inicio" onchange="calcularDias()"></div>
-<div class="field"><label>Fecha Fin:</label><input type="date" id="fecha_fin" onchange="calcularDias()"></div>
-</div>
-<div class="field"><label>Número total de días:</label><input type="text" id="total_dias" readonly></div>
+    <div class="section">1. DATOS DEL TRABAJADOR</div>
+    <div class="field"><label>Nombre y Apellidos:</label><input type="text"></div>
+    <div class="grid">
+        <div class="field"><label style="width: 80px;">DNI/NIE:</label><input type="text"></div>
+        <div class="field"><label style="width: 80px;">Puesto:</label><input type="text"></div>
+    </div>
 
-<div class="section">4. FIRMAS Y CONSTANCIA</div>
-<div class="grid">
-<div class="field">
-<label>Firma del trabajador/a:</label>
-<div class="signature-wrapper">
-<canvas id="firma_trabajador"></canvas>
-<button class="clear-btn" onclick="clearCanvas('firma_trabajador')">Borrar</button>
-</div>
-</div>
-<div class="field">
-<label>Firma de autorización (empresa):</label>
-<div class="signature-wrapper">
-<canvas id="firma_autoriza"></canvas>
-<button class="clear-btn" onclick="clearCanvas('firma_autoriza')">Borrar</button>
-</div>
-</div>
-</div>
+    <div class="section">2. TIPO DE SOLICITUD</div>
+    <div class="type-grid">
+        <label><input type="checkbox"> Vacaciones</label>
+        <label><input type="checkbox"> Permiso no retribuido</label>
+        <label><input type="checkbox"> Asuntos propios</label>
+        <label><input type="checkbox"> Festivo Local</label>
+        <label style="grid-column: span 2;"><input type="checkbox"> Otros: <input type="text" style="width: 70%; border-bottom: 1px solid #ccc; border-top:0; border-left:0; border-right:0;"></label>
+    </div>
 
-<button class="btn-submit" onclick="enviar()">Enviar Solicitud</button>
-<p id="mensaje" style="color:green; margin-top:10px;"></p>
+    <div class="section">3. PERÍODO Y CÁLCULO</div>
+    <div class="grid">
+        <div class="field"><label style="width: 100px;">Fecha Inicio:</label><input type="date" id="fi" onchange="calc()"></div>
+        <div class="field"><label style="width: 100px;">Fecha Fin:</label><input type="date" id="ff" onchange="calc()"></div>
+    </div>
+    <div class="field"><label>Días totales:</label><input type="text" id="td" readonly></div>
+
+    <div class="section">4. FIRMA DEL SOLICITANTE</div>
+    <div class="signature-container">
+        <div class="signature-box">
+            <button class="clear-btn" onclick="clearC('s1')">Limpiar</button>
+            <canvas id="s1"></canvas>
+        </div>
+        <div style="font-size: 12px; color: #666; display: flex; align-items: center;">
+            Firme en el recuadro de la izquierda. Esta firma quedará integrada en el documento final.
+        </div>
+    </div>
+
+    <div class="rgpd">
+        <strong>PROTECCIÓN DE DATOS:</strong> El responsable del tratamiento es la empresa seleccionada. Sus datos se tratarán para la gestión de recursos humanos y control de jornada. Base legal: Ejecución del contrato laboral. Podrá ejercer sus derechos ante la dirección de la empresa o a través de contabilidad@strata.es.
+    </div>
 </div>
 
 <script>
-// calcular días
-function calcularDias(){
-const inicio=document.getElementById('fecha_inicio').value;
-const fin=document.getElementById('fecha_fin').value;
-if(inicio && fin){
-const diff=(new Date(fin)-new Date(inicio))/(1000*60*60*24)+1;
-document.getElementById('total_dias').value=diff>0?diff:0;
-}
-}
+    function calc() {
+        const i = document.getElementById('fi').value, f = document.getElementById('ff').value;
+        if(i && f) {
+            const d1 = new Date(i), d2 = new Date(f);
+            if(d2 >= d1) document.getElementById('td').value = Math.ceil(Math.abs(d2-d1)/(1000*60*60*24))+1;
+            else document.getElementById('td').value = "Error";
+        }
+    }
 
-// función para inicializar firmas
-function initFirma(canvasId){
-  const canvas=document.getElementById(canvasId);
-  const ctx=canvas.getContext('2d');
-  let dibujando=false;
-
-  function resize(){
-    canvas.width=canvas.offsetWidth;
-    canvas.height=canvas.offsetHeight;
-    ctx.lineWidth=2;
-    ctx.lineCap='round';
-    ctx.lineJoin='round';
-  }
-  resize();
-  window.addEventListener('resize',resize);
-
-  function getPos(e){
-    const rect=canvas.getBoundingClientRect();
-    if(e.touches) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
-    return {x:e.clientX-rect.left, y:e.clientY-rect.top};
-  }
-
-  canvas.addEventListener('mousedown', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
-  canvas.addEventListener('mousemove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke();}});
-  window.addEventListener('mouseup', ()=>dibujando=false);
-  canvas.addEventListener('mouseleave', ()=>dibujando=false);
-  
-  canvas.addEventListener('touchstart', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();},{passive:false});
-  canvas.addEventListener('touchmove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();}},{passive:false});
-  canvas.addEventListener('touchend', ()=>dibujando=false);
-
-  return ctx;
-}
-
-const ctxTrabajador=initFirma('firma_trabajador');
-const ctxAutoriza=initFirma('firma_autoriza');
-
-function clearCanvas(id){
-  const c=document.getElementById(id);
-  c.getContext('2d').clearRect(0,0,c.width,c.height);
-}
-
-// enviar datos
-function enviar(){
-  const data={
-    nombre: document.getElementById('nombre').value,
-    dni: document.getElementById('dni').value,
-    puesto: document.getElementById('puesto').value,
-    empresa: document.getElementById('empresa').value,
-    tipo: [
-      document.getElementById('vacaciones').checked?'Vacaciones':'',
-      document.getElementById('permiso').checked?'Permiso no retribuido':'',
-      document.getElementById('asuntos').checked?'Asuntos propios':'',
-      document.getElementById('festivo').checked?'Festivo Local':'',
-      document.getElementById('otros').checked?document.getElementById('otros_text').value:''
-    ].filter(x=>x).join(', '),
-    fecha_inicio: document.getElementById('fecha_inicio').value,
-    fecha_fin: document.getElementById('fecha_fin').value,
-    dias: document.getElementById('total_dias').value,
-    firma_trabajador: document.getElementById('firma_trabajador').toDataURL(),
-    firma_autoriza: document.getElementById('firma_autoriza').toDataURL()
-  };
-
-  fetch('URL_DE_TU_WEB_APP', {method:'POST', body: JSON.stringify(data)})
-    .then(res=>res.json())
-    .then(res=>{
-      document.getElementById('mensaje').textContent="✅ Solicitud enviada correctamente!";
-    })
-    .catch(err=>{
-      document.getElementById('mensaje').textContent="❌ Error al enviar, revise conexión.";
-      console.error(err);
-    });
-}
+    function initC(id) {
+        const c = document.getElementById(id), ctx = c.getContext('2d');
+        c.width = c.offsetWidth; c.height = c.offsetHeight;
+        let drawing = false; ctx.lineWidth = 2; ctx.lineCap = 'round';
+        const getP = e => { const r = c.getBoundingClientRect(); return { x: (e.clientX || (e.touches && e.touches[0].clientX)) - r.left, y: (e.clientY || (e.touches && e.touches[0].clientY)) - r.top }; };
+        const start = e => { drawing = true; ctx.beginPath(); const p = getP(e); ctx.moveTo(p.x, p.y); if(e.cancelable) e.preventDefault(); };
+        const move = e => { if(!drawing) return; const p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.cancelable) e.preventDefault(); };
+        c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', () => drawing = false);
+        c.addEventListener('touchstart', start, {passive:false}); c.addEventListener('touchmove', move, {passive:false});
+    }
+    function clearC(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+    window.onload = () => initC('s1');
 </script>
 </body>
 </html>
