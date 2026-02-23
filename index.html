@@ -15,8 +15,8 @@ input[type="text"], input[type="date"], select { padding:6px; font-size:13px; bo
 .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; font-size:13px; }
 .type-item { display:flex; align-items:center; }
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.signature-wrapper { border:1px solid #000; background:#fff; position:relative; cursor:crosshair; margin-top:5px; }
-canvas { display:block; width:100%; height:120px; }
+.signature-wrapper { border:1px solid #000; background:#fff; position:relative; cursor:crosshair; margin-top:5px; height:150px; }
+canvas { width:100%; height:100%; }
 .clear-btn { position:absolute; top:5px; right:5px; background:#e74c3c; color:white; border:none; padding:3px 8px; cursor:pointer; font-size:10px; border-radius:3px; z-index:10; }
 #total_dias { font-weight:bold; background-color:#e8f4fd; color:#2c3e50; border:1px solid #3498db; text-align:center; max-width:80px; margin-top:5px; }
 .btn-submit { padding:12px 25px; background:#27ae60; color:white; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold; margin-top:10px; }
@@ -87,14 +87,35 @@ document.getElementById('total_dias').value=diff>0?diff:0;
 }
 
 // canvas firma
-let canvas=document.getElementById('firma'), ctx=canvas.getContext('2d'), dibujando=false;
-canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;
-canvas.addEventListener('mousedown',e=>{dibujando=true; const r=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX-r.left,e.clientY-r.top);});
-canvas.addEventListener('mousemove',e=>{if(dibujando){const r=canvas.getBoundingClientRect(); ctx.lineTo(e.clientX-r.left,e.clientY-r.top); ctx.stroke();}});
-window.addEventListener('mouseup',()=>dibujando=false);
-canvas.addEventListener('touchstart',e=>{dibujando=true; const r=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top); e.preventDefault();},{passive:false});
-canvas.addEventListener('touchmove',e=>{if(dibujando){const r=canvas.getBoundingClientRect(); ctx.lineTo(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top); ctx.stroke(); e.preventDefault();}},{passive:false});
-function clearCanvas(id){const c=document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height);}
+let canvas=document.getElementById('firma'), ctx=canvas.getContext('2d');
+let dibujando=false;
+
+function resizeCanvas(){
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e){
+  const rect=canvas.getBoundingClientRect();
+  if(e.touches) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
+  return {x:e.clientX-rect.left, y:e.clientY-rect.top};
+}
+
+canvas.addEventListener('mousedown', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);});
+canvas.addEventListener('mousemove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke();}});
+canvas.addEventListener('mouseup', ()=>dibujando=false);
+canvas.addEventListener('mouseleave', ()=>dibujando=false);
+
+canvas.addEventListener('touchstart', e=>{dibujando=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();},{passive:false});
+canvas.addEventListener('touchmove', e=>{if(dibujando){let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();}},{passive:false});
+canvas.addEventListener('touchend', ()=>dibujando=false);
+
+function clearCanvas(id){document.getElementById(id).getContext('2d').clearRect(0,0,canvas.width,canvas.height);}
 
 // enviar datos a Google Sheets
 function enviar(){
